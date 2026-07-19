@@ -1,3 +1,18 @@
-node_modules/
+# Environment variables
 .env
-package-lock.json
+.env.*
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+
+# Build output (if applicable)
+dist/
+build/
