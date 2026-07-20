@@ -2,6 +2,9 @@
 .env
 .env.*
 
+#Dependencies
+node_modules/
+
 # Logs
 *.log
 logs/
