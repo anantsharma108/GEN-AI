@@ -1,4 +1,5 @@
 const userModel=require('../models/user.model');
+const blacklistModel=require('../models/blacklist.model');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
@@ -22,7 +23,7 @@ async function registerUser(req,res){
     });
 
     if(isUserExist ){
-        res.status(400).json({
+        return res.status(400).json({
             message:'user already exists with this username or email'
         })
     }
@@ -45,6 +46,11 @@ async function registerUser(req,res){
     })
 }
 
+/**
+ *@name loginUser
+ *@description login a existing user,expects username or email and a password in the req.body
+ *@access Public
+ */
 async function loginUser(req,res){
     const{username,email,password}=req.body;
 
@@ -65,7 +71,7 @@ async function loginUser(req,res){
     }
     const checkPassword=await bcrypt.compare(password,user.password);
     if(!checkPassword){
-        res.status(400).json({
+        return res.status(400).json({
             message:"username and password doesn't match"
         })
     }
@@ -81,4 +87,29 @@ async function loginUser(req,res){
     })
 }
 
-module.exports={registerUser,loginUser};
+/**
+ *@name logoutUser
+ *@description logout a user
+ *@access Public
+ */
+async function logoutUser(req,res){
+    const token=req.cookies.token;
+    if(!token){
+        return res.status(401).json({
+            message:"user is not logged in"
+        })
+    }
+
+
+    await blacklistModel.create({
+        token
+    })
+
+    res.clearCookie("token");
+
+    res.status(200).json({
+        message:"user logged out successfully"
+    });
+
+}
+module.exports={registerUser,loginUser,logoutUser};
